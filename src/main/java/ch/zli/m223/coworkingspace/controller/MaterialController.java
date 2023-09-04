@@ -15,36 +15,36 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.resteasy.reactive.RestPath;
 
-import ch.zli.m223.coworkingspace.model.Booking;
-import ch.zli.m223.coworkingspace.service.BookingService;
+import ch.zli.m223.coworkingspace.model.Material;
+import ch.zli.m223.coworkingspace.service.MaterialService;
 
 @Path("/materials")
 public class MaterialController {
 
     @Inject
-    BookingService bookingService;
+    MaterialService materialService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Index all Materials.", description = "Returns a list of all Materials.")
-    public List<Booking> index() {
-        return bookingService.findAll();
+    public List<Material> index() {
+        return materialService.findAll();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Index specific Material", description = "Returns a specific Material")
-    public Booking getBooking(@RestPath long id) {
-        return bookingService.findSpecific(id);
+    public Material getMaterial(@RestPath long id) {
+        return materialService.findSpecific(id);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Creates a new Material.", description = "Creates a new material and returns the newly added material.")
-    public Booking create(Booking booking) {
-        return bookingService.createBooking(booking);
+    public Material create(Material material) {
+        return materialService.createMaterial(material);
     }
 
     @DELETE
@@ -53,14 +53,14 @@ public class MaterialController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Deletes a material.", description = "Deletes material")
     public void delete(@RestPath long id) {
-        bookingService.deleteBooking(id);
+        materialService.deleteMaterial(id);
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Edits a booking.", description = "Edits a booking and returns the booking.")
-    public Booking updateEntry(Booking booking) {
-        return bookingService.updateBooking(booking);
+    @Operation(summary = "Edits a material.", description = "Edits a material and returns the material.")
+    public Material updateEntry(Material material) {
+        return materialService.updateMaterial(material);
     }
 }
