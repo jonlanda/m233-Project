@@ -206,6 +206,15 @@ public class BookingResourceTest {
         }
 
         @Test
+        public void testSpecificBookingEndpointNotFound() {
+                given().contentType(ContentType.JSON)
+                                .auth().oauth2(token)
+                                .when().get("/bookings/" + 56)
+                                .then()
+                                .statusCode(404);
+        }
+
+        @Test
         public void testEditEndpoint() {
                 Booking booking = new Booking();
                 booking.setDate(LocalDateTime.of(2023, 06, 12, 12, 10, 05));

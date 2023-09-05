@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 
 import ch.zli.m223.coworkingspace.model.Booking;
 
@@ -21,8 +22,13 @@ public class BookingService {
     }
 
     public Booking findSpecific(long id) {
-        Booking booking = entityManager.find(Booking.class, id);
-        return booking;
+        Booking booking;
+        booking = entityManager.find(Booking.class, id);
+        if (booking == null) {
+            throw new NotFoundException();
+        } else {
+            return booking;
+        }
     }
 
     @Transactional
@@ -34,10 +40,14 @@ public class BookingService {
     @Transactional
     public void deleteBooking(long id, String userEmail, Boolean isAdmin) {
         Booking booking = entityManager.find(Booking.class, id);
-        if (booking.getUser().getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
-            entityManager.remove(booking);
+        if (booking == null) {
+            throw new NotFoundException();
         } else {
-            throw new ForbiddenException("NOT AUTHORIZED");
+            if (booking.getUser().getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
+                entityManager.remove(booking);
+            } else {
+                throw new ForbiddenException("NOT AUTHORIZED");
+            }
         }
     }
 
@@ -47,8 +57,14 @@ public class BookingService {
             if (isAdmin == false && booking.getStatus() == true) {
                 throw new ForbiddenException("NOT AUTHORIZED");
             } else {
-                entityManager.merge(booking);
-                return booking;
+                Booking booking1 = new Booking();
+                booking1 = entityManager.find(Booking.class, booking.getId());
+                if (booking1 == null) {
+                    throw new NotFoundException();
+                } else {
+                    entityManager.merge(booking);
+                    return booking;
+                }
             }
         } else {
             throw new ForbiddenException("NOT AUTHORIZED");

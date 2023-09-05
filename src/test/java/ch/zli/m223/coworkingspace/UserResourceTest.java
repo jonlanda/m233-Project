@@ -58,7 +58,7 @@ public class UserResourceTest {
                                 .then()
                                 .statusCode(200)
                                 .body(is(
-                                                "[{\"id\":18,\"firstname\":\"Jon\",\"lastname\":\"Landa\",\"password\":\"123\",\"isAdmin\":true,\"email\":\"jon@test.ch\",\"booking\":[]}]"));
+                                                "[{\"id\":19,\"firstname\":\"Jon\",\"lastname\":\"Landa\",\"password\":\"123\",\"isAdmin\":true,\"email\":\"jon@test.ch\",\"booking\":[]}]"));
         }
 
         @Test

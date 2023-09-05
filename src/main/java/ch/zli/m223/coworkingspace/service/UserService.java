@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 
 import ch.zli.m223.coworkingspace.model.ApplicationUser;
 
@@ -22,7 +23,11 @@ public class UserService {
 
     public ApplicationUser findSpecific(long id) {
         ApplicationUser applicationUser = entityManager.find(ApplicationUser.class, id);
-        return applicationUser;
+        if (applicationUser == null) {
+            throw new NotFoundException();
+        } else {
+            return applicationUser;
+        }
     }
 
     @Transactional
@@ -42,10 +47,14 @@ public class UserService {
     @Transactional
     public void deleteApplicationUser(long id, String userEmail, Boolean isAdmin) {
         ApplicationUser applicationUser = entityManager.find(ApplicationUser.class, id);
-        if (applicationUser.getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
-            entityManager.remove(applicationUser);
+        if (applicationUser == null) {
+            throw new NotFoundException();
         } else {
-            throw new ForbiddenException("NOT AUTHORIZED");
+            if (applicationUser.getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
+                entityManager.remove(applicationUser);
+            } else {
+                throw new ForbiddenException("NOT AUTHORIZED");
+            }
         }
     }
 
@@ -55,8 +64,14 @@ public class UserService {
             if (isAdmin == false && applicationUser.getIsAdmin() == true) {
                 throw new ForbiddenException("NOT AUTHORIZED");
             } else {
-                entityManager.merge(applicationUser);
-                return applicationUser;
+                ApplicationUser user = new ApplicationUser();
+                user = entityManager.find(ApplicationUser.class, applicationUser.getId());
+                if (user == null) {
+                    throw new NotFoundException();
+                } else {
+                    entityManager.merge(applicationUser);
+                    return applicationUser;
+                }
             }
         } else {
             throw new ForbiddenException("NOT AUTHORIZED");

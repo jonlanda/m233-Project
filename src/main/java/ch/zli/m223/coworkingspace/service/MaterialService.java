@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 
 import ch.zli.m223.coworkingspace.model.Material;
 
@@ -21,7 +22,11 @@ public class MaterialService {
 
     public Material findSpecific(long id) {
         Material material = entityManager.find(Material.class, id);
-        return material;
+        if (material == null) {
+            throw new NotFoundException();
+        } else {
+            return material;
+        }
     }
 
     @Transactional
@@ -33,12 +38,21 @@ public class MaterialService {
     @Transactional
     public void deleteMaterial(long id) {
         Material material = entityManager.find(Material.class, id);
-        entityManager.remove(material);
+        if (material == null) {
+            throw new NotFoundException();
+        } else {
+            entityManager.remove(material);
+        }
     }
 
     @Transactional
     public Material updateMaterial(Material material) {
-        entityManager.merge(material);
-        return material;
+        Material material2 = entityManager.find(Material.class, material.getId());
+        if (material2 == null) {
+            throw new NotFoundException();
+        } else {
+            entityManager.merge(material);
+            return material;
+        }
     }
 }
