@@ -57,13 +57,43 @@ public class BookingResourceTest {
 
         @Test
         public void testIndexEndpoint() {
-                System.out.println(token);
                 given()
                                 .auth().oauth2(token)
                                 .when().get("/bookings")
                                 .then()
                                 .statusCode(200)
                                 .body(is("[]"));
+        }
+
+        @Test
+        public void testSpecificBookingEndpoint() {
+                Booking booking = new Booking();
+                booking.setDate(LocalDateTime.of(2023, 06, 12, 12, 10, 05));
+                booking.setHalfDay(false);
+                booking.setAfternoon(false);
+                booking.setMorning(false);
+                booking.setStatus(false);
+                booking.setUser(appUser);
+                booking = given().contentType(ContentType.JSON)
+                                .body(booking)
+                                .auth().oauth2(token)
+                                .when().post("/bookings")
+                                .then()
+                                .statusCode(200)
+                                .extract().body().as(Booking.class);
+                given().contentType(ContentType.JSON)
+                                .auth().oauth2(token)
+                                .when().get("/bookings/" + booking.getId())
+                                .then()
+                                .statusCode(200)
+                                .body("date", is(booking.getDate().toString()))
+                                .body("halfDay", is(booking.getHalfDay()))
+                                .body("status", is(booking.getStatus()));
+                given().contentType(ContentType.JSON)
+                                .auth().oauth2(token)
+                                .when().delete("/bookings/" + booking.getId())
+                                .then()
+                                .statusCode(204);
         }
 
         @Test
@@ -101,15 +131,16 @@ public class BookingResourceTest {
                 booking.setMorning(false);
                 booking.setStatus(false);
                 booking.setUser(appUser);
-                given().contentType(ContentType.JSON)
+                booking = given().contentType(ContentType.JSON)
                                 .body(booking)
                                 .auth().oauth2(token)
                                 .when().post("/bookings")
                                 .then()
-                                .statusCode(200);
+                                .statusCode(200)
+                                .extract().body().as(Booking.class);
                 given()
                                 .auth().oauth2(token)
-                                .when().delete("/bookings/1")
+                                .when().delete("/bookings/" + booking.getId())
                                 .then()
                                 .statusCode(204);
         }
