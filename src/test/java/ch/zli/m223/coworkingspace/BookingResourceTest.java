@@ -66,6 +66,14 @@ public class BookingResourceTest {
         }
 
         @Test
+        public void testIndexEndpointNotLoggedIn() {
+                given()
+                                .when().get("/bookings")
+                                .then()
+                                .statusCode(401);
+        }
+
+        @Test
         public void testSpecificBookingEndpoint() {
                 Booking booking = new Booking();
                 booking.setDate(LocalDateTime.of(2023, 06, 12, 12, 10, 05));
@@ -141,6 +149,58 @@ public class BookingResourceTest {
                 given()
                                 .auth().oauth2(token)
                                 .when().delete("/bookings/" + booking.getId())
+                                .then()
+                                .statusCode(204);
+        }
+
+        @Test
+        public void testDeleteEndpointNotYouOrAdmin() {
+                String token1;
+                ApplicationUser user2 = new ApplicationUser();
+                user2.setFirstname("Jon2");
+                user2.setLastname("Landa2");
+                user2.setPassword("1232");
+                user2.setEmail("jon2@test.ch");
+                user2.setIsAdmin(false);
+                user2 = given().contentType(ContentType.JSON)
+                                .body(user2)
+                                .when().post("/users")
+                                .then()
+                                .statusCode(200)
+                                .extract().body().as(ApplicationUser.class);
+                token1 = given().contentType(ContentType.JSON)
+                                .body(user2)
+                                .when().post("/login/generate")
+                                .then()
+                                .statusCode(200)
+                                .extract().body().asString();
+                Booking booking = new Booking();
+                booking.setDate(LocalDateTime.of(2023, 06, 12, 12, 10, 05));
+                booking.setHalfDay(false);
+                booking.setAfternoon(false);
+                booking.setMorning(false);
+                booking.setStatus(false);
+                booking.setUser(appUser);
+                booking = given().contentType(ContentType.JSON)
+                                .body(booking)
+                                .auth().oauth2(token)
+                                .when().post("/bookings")
+                                .then()
+                                .statusCode(200)
+                                .extract().body().as(Booking.class);
+                given()
+                                .auth().oauth2(token1)
+                                .when().delete("/bookings/" + booking.getId())
+                                .then()
+                                .statusCode(403);
+                given()
+                                .auth().oauth2(token)
+                                .when().delete("/bookings/" + booking.getId())
+                                .then()
+                                .statusCode(204);
+                given()
+                                .auth().oauth2(token)
+                                .when().delete("/users/" + user2.getId())
                                 .then()
                                 .statusCode(204);
         }
