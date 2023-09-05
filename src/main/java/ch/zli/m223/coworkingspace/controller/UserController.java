@@ -2,6 +2,7 @@ package ch.zli.m223.coworkingspace.controller;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,6 +27,7 @@ public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Index all Users.", description = "Returns a list of all Users.")
     public List<ApplicationUser> index() {
         return userService.findAll();
@@ -34,6 +36,7 @@ public class UserController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Index specific User", description = "Returns a specific User")
     public ApplicationUser getUser(@RestPath long id) {
         return userService.findSpecific(id);
@@ -51,6 +54,7 @@ public class UserController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Deletes a User.", description = "Deletes User")
     public void delete(@RestPath long id) {
         userService.deleteApplicationUser(id);
@@ -59,6 +63,7 @@ public class UserController {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Edits a User.", description = "Edits a User and returns the User.")
     public ApplicationUser updateUser(ApplicationUser appliacationUser) {
         return userService.updateApplicationUser(appliacationUser);

@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.ws.rs.ForbiddenException;
 
 import ch.zli.m223.coworkingspace.model.Booking;
 
@@ -31,14 +32,22 @@ public class BookingService {
     }
 
     @Transactional
-    public void deleteBooking(long id) {
+    public void deleteBooking(long id, String userEmail, Boolean isAdmin) {
         Booking booking = entityManager.find(Booking.class, id);
-        entityManager.remove(booking);
+        if (booking.getUser().getEmail() == userEmail || isAdmin == true) {
+            entityManager.remove(booking);
+        } else {
+            throw new ForbiddenException("NOT AUTHORIZED");
+        }
     }
 
     @Transactional
-    public Booking updateBooking(Booking booking) {
-        entityManager.merge(booking);
-        return booking;
+    public Booking updateBooking(Booking booking, String userEmail, Boolean isAdmin) {
+        if (booking.getUser().getEmail() == userEmail || isAdmin == true) {
+            entityManager.merge(booking);
+            return booking;
+        } else {
+            throw new ForbiddenException("NOT AUTHORIZED");
+        }
     }
 }

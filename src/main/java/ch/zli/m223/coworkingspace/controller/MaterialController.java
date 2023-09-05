@@ -2,6 +2,7 @@ package ch.zli.m223.coworkingspace.controller;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -42,6 +43,7 @@ public class MaterialController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin" })
     @Operation(summary = "Creates a new Material.", description = "Creates a new material and returns the newly added material.")
     public Material create(Material material) {
         return materialService.createMaterial(material);
@@ -51,6 +53,7 @@ public class MaterialController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin" })
     @Operation(summary = "Deletes a material.", description = "Deletes material")
     public void delete(@RestPath long id) {
         materialService.deleteMaterial(id);
@@ -59,6 +62,7 @@ public class MaterialController {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin" })
     @Operation(summary = "Edits a material.", description = "Edits a material and returns the material.")
     public Material updateEntry(Material material) {
         return materialService.updateMaterial(material);
