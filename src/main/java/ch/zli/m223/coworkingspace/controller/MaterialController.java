@@ -27,6 +27,7 @@ public class MaterialController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Index all Materials.", description = "Returns a list of all Materials.")
     public List<Material> index() {
         return materialService.findAll();
@@ -35,6 +36,7 @@ public class MaterialController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ "Admin", "User" })
     @Operation(summary = "Index specific Material", description = "Returns a specific Material")
     public Material getMaterial(@RestPath long id) {
         return materialService.findSpecific(id);

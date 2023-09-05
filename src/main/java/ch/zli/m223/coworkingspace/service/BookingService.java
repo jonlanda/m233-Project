@@ -6,7 +6,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 
 import ch.zli.m223.coworkingspace.model.Booking;
@@ -46,7 +45,7 @@ public class BookingService {
     public Booking updateBooking(Booking booking, String userEmail, Boolean isAdmin) {
         if (booking.getUser().getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
             if (isAdmin == false && booking.getStatus() == true) {
-                throw new BadRequestException("NOT AUTHORIZED");
+                throw new ForbiddenException("NOT AUTHORIZED");
             } else {
                 entityManager.merge(booking);
                 return booking;

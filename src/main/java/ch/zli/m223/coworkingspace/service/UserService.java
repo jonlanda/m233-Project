@@ -26,9 +26,17 @@ public class UserService {
     }
 
     @Transactional
-    public ApplicationUser createApplicationUser(ApplicationUser applicationUser) {
-        entityManager.persist(applicationUser);
-        return applicationUser;
+    public ApplicationUser createApplicationUser(ApplicationUser applicationUser, Boolean isAdmin) {
+        if (findAll().size() == 0) {
+            applicationUser.setIsAdmin(true);
+            entityManager.persist(applicationUser);
+            return applicationUser;
+        } else if (isAdmin == false && applicationUser.getIsAdmin() == true) {
+            throw new ForbiddenException("FORBIDDEN");
+        } else {
+            entityManager.persist(applicationUser);
+            return applicationUser;
+        }
     }
 
     @Transactional
