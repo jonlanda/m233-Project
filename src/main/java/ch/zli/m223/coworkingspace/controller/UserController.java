@@ -47,7 +47,7 @@ public class UserController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Creates a new User.", description = "Creates a new User and returns the newly added User.")
+    @Operation(summary = "Creates a new User.", description = "Creates a new User and returns the newly added User. Is used for Registering")
     public ApplicationUser create(ApplicationUser applicationUser, @Context SecurityContext ctx) {
         Boolean isAdmin = ctx.isUserInRole("Admin");
         return userService.createApplicationUser(applicationUser, isAdmin);
