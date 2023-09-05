@@ -7,6 +7,10 @@ To set-up the project all you need to do is clone the Repo from the [Github](htt
 
 ## Starting the Project
 To start the project you just need to open it in the container (a window will pop up for that if you're using the vs-code extension) and the run the command ```./mvnw quarkus:dev``` in your terminal. If you use the Quarkus extension you can also just use Ctrl + Shift + P and the type 'Quarkus: Debug current Quarkus project'
+#### Links
+This Project includes a Swagger-UI and pgAdmin
+Swagger-UI: http://localhost:8080/q/swagger-ui/
+pgAdmin: http://localhost:5050
 
 ## Starting with Test-Data
 To start the project with test data you need to open the project in the container just like normal (if you already have it open in the container you don't need to do it again). But then you need to add something to your ```./mvnw quarkus:dev``` command. We need to tell Quarkus, that we want to open the project on our test profile so just type ```./mvnw quarkus:dev -Dquarkus.profile=testwithdata```. To edit the test data go to ```src/main/resources/init-dev.sql```.
