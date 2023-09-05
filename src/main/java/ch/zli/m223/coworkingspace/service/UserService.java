@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.ws.rs.ForbiddenException;
 
 import ch.zli.m223.coworkingspace.model.ApplicationUser;
 
@@ -31,14 +32,26 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteApplicationUser(long id) {
+    public void deleteApplicationUser(long id, String userEmail, Boolean isAdmin) {
         ApplicationUser applicationUser = entityManager.find(ApplicationUser.class, id);
-        entityManager.remove(applicationUser);
+        if (applicationUser.getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
+            entityManager.remove(applicationUser);
+        } else {
+            throw new ForbiddenException("NOT AUTHORIZED");
+        }
     }
 
     @Transactional
-    public ApplicationUser updateApplicationUser(ApplicationUser applicationUser) {
-        entityManager.merge(applicationUser);
-        return applicationUser;
+    public ApplicationUser updateApplicationUser(ApplicationUser applicationUser, String userEmail, Boolean isAdmin) {
+        if (applicationUser.getEmail().equalsIgnoreCase(userEmail) || isAdmin == true) {
+            if (isAdmin == false && applicationUser.getIsAdmin() == true) {
+                throw new ForbiddenException("NOT AUTHORIZED");
+            } else {
+                entityManager.merge(applicationUser);
+                return applicationUser;
+            }
+        } else {
+            throw new ForbiddenException("NOT AUTHORIZED");
+        }
     }
 }

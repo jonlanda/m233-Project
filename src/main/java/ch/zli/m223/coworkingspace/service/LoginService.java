@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.BadRequestException;
 
-import org.eclipse.microprofile.jwt.Claims;
-
 import ch.zli.m223.coworkingspace.model.ApplicationUser;
 import io.smallrye.jwt.build.Jwt;
 
@@ -34,17 +32,15 @@ public class LoginService {
             final Boolean isAdmin = user.get(0).getIsAdmin();
             if (isAdmin == true) {
                 String token = Jwt.issuer("https://example.com/issuer")
-                        .upn("jon")
+                        .upn(user.get(0).getEmail())
                         .groups(new HashSet<>(Arrays.asList("Admin")))
-                        .claim(Claims.email.name(), user.get(0).getEmail())
                         .expiresAt(Instant.now().plus(24, ChronoUnit.HOURS))
                         .sign();
                 return token;
             } else {
                 String token = Jwt.issuer("https://example.com/issuer")
-                        .upn("jon")
+                        .upn(user.get(0).getEmail())
                         .groups(new HashSet<>(Arrays.asList("User")))
-                        .claim(Claims.email.name(), user.get(0).getEmail())
                         .expiresAt(Instant.now().plus(24, ChronoUnit.HOURS))
                         .sign();
                 return token;
